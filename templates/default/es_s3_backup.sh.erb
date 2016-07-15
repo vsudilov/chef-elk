@@ -1,0 +1,22 @@
+#!/bin/bash
+# Simple script that uses elasticsearch cloud-aws plugin
+# to create a backup of today's index
+
+DATE=$(date +"%Y.%m.%d")
+URL="http://localhost:9200/_snapshot/cbio-logs"
+
+# Define the snapshot; idempotent operation
+curl -XPUT "${URL}" -d '{
+    "type": "s3",
+    "settings": {
+        "bucket": "<%= node['elk']['elasticsearch']['s3_backup_bucket'] %>",
+        "include_global_state": false,
+        "compress": true,
+        "indices": "'"logstash-${DATE}"'"
+    }
+}'
+
+# Initiate the snapshot; Whichever node calls this first will cause
+# a 503 error on subsequent nodes as long as the snapshot is in-progress.
+# This is expected and harmless
+curl -XPUT "${URL}/${DATE}"

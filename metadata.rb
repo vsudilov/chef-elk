@@ -1,0 +1,27 @@
+name             'elk'
+maintainer       'Vladimir Sudilovsky'
+maintainer_email 'vsudilovsky@carbonblack.com'
+license          'MIT'
+description      'Installs the ELK stack, targetting OpsWorks specifically.'
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          '0.1.0'
+
+supports 'amazon'
+supports 'centos'
+supports 'debian'
+supports 'redhat'
+supports 'scientific'
+supports 'ubuntu'
+
+depends 'java'
+depends 'runit'
+depends 'apt'
+depends 'yum'
+depends 'build-essential'
+
+depends 'elasticsearch', '~> 2.3.0'
+depends 'kibana_lwrp'
+depends 'logstash'
+depends 'ohai', '<= 3.0.1'
+depends 'nginx'
+depends 'rsyslog'

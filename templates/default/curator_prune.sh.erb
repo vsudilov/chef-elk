@@ -1,0 +1,2 @@
+/usr/local/bin/curator --host localhost delete indices --older-than <%= node['elk']['elasticsearch']['visibility_period_days'] %> --time-unit days \
+   --timestring '%Y.%m.%d'

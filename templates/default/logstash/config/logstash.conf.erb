@@ -1,0 +1,12 @@
+input {
+    <%= node['elk']['logstash']['conf']['input'] %>
+}
+
+filter {
+    <%= node['elk']['logstash']['conf']['filter'] %>
+}
+
+output {
+    <%= node['elk']['logstash']['conf']['output'] %>
+}
+

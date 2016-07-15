@@ -1,0 +1,4 @@
+.kitchen/
+.project
+.vagrant/
+Berksfile.lock
