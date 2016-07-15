@@ -6,16 +6,18 @@ Not that each instance will have an entire ELK stack, although multiple connecte
 
 Test kitchen supported.
 
+** NOTE: All of the default SSL certs are set to the string "FAKE". This is intentional, and will break functionality. Drop your own SSL certs in `templates/default` or use custom attributes to dynamically override. ***
+
 ## OpsWorks
   
 ### Lifecycle
 
 ```
-		Setup: [java::default]
-		Configure: [elk::reconfigure]
-		Deploy: [elk::es_install, elk::logstash_install, elk::kibana_install, elk::cron_install]
-		Undeploy: []
-		Shutdown: []
+    Setup: [java::default]
+    Configure: [elk::reconfigure]
+    Deploy: [elk::es_install, elk::logstash_install, elk::kibana_install, elk::cron_install]
+    Undeploy: []
+    Shutdown: []
 ```
 Provisioning occurs through the `elk::[component]_install` recipes.
 
@@ -25,7 +27,7 @@ No special care is necessary for de-provisioning.
 
 ### Permissions/IAM
 
-If snapshot/prune is enabled (elk::cron_install is run) This stack (ie instance-profile) requires read+write access to the bucket defined in `node['elk']['elasticsearch']['s3_backup_bucket'] = "cbio-dev-ss"`. 
+If snapshot/prune is enabled (elk::cron_install is run) This stack (ie instance-profile) requires read+write access to the bucket defined in `node['elk']['elasticsearch']['s3_backup_bucket'] = "my-backup-bucket"`. 
 
 The standard/built-in opsworks-service-role is required for indirect aws-resource management (ELBs, Cloudwatch, Iam:Passrole)
 
@@ -41,7 +43,7 @@ If understanding the details about what's happening aren't a priority at the mom
 
   1. Install chef-dk (https://downloads.chef.io/chef-dk/)
   1. `git clone`
-  1. `cd unity-chef-elk/`
+  1. `cd chef-elk/`
   1. `berks vendor cookbooks && cd cookbooks/` 
   1. `chef-client -z -o elk::es_install,elk::logstash_install,elk::kibana_install,elk::reconfigure`
 
@@ -53,12 +55,10 @@ If understanding the details about what's happening aren't a priority at the mom
   - `node['elk']['elasticsearch']['cluster_name'] = "my-es-cluster"`
   - `node['elk']['elasticsearch']['s3_backup_bucket'] = "my-backup-bucket"`
   - `node['elk']['elasticsearch']['visibility_period_days'] = 10`
-
-  # Nginx serves on :443 SSL, leave these as `nil` to use built-in self-signed certs
-  - `node['elk']['kibana']['nginx']['ssl_cert'] = nil`
+   
+  - `node['elk']['kibana']['nginx']['ssl_cert'] = nil  #nginx serves on :443 SSL, leave these as `nil` to use built-in self-signed certs`
   - `node['elk']['kibana']['nginx']['ssl_key'] = nil`
-  # Nginx basic auth: Default username/password is admin/password; use htpasswd to generate new logins and override this attribute
-  - `node['elk']['kibana']['nginx']['htaccess'] = ["admin:$apr1$w/E23yd.$ylUt5OvroZKZrapOPsvZj1"]`
+  - `node['elk']['kibana']['nginx']['htaccess'] = ["admin:$apr1$w/E23yd.$ylUt5OvroZKZrapOPsvZj1"]  #nginx basic auth: Default username/password is admin/password; use htpasswd to generate new logins and override this attribute`
 
 Should be N/2+1 to prevent splitbrain scenarios, where N is the number of nodes in your cluster
   - `node['elk']['elasticsearch']['minimum_master_nodes'] = 1`
